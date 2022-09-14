@@ -14,6 +14,7 @@ tile_speed = 10
 black = 0, 0, 0
 block_color = 255, 255, 255
 epsilon = 0.1
+score = 0
 
 screen = pygame.display.set_mode(size)
 
@@ -40,18 +41,24 @@ for i in range(2):
 
 while 1:
     for event in pygame.event.get():
-        if event.type == pygame.QUIT: sys.exit()
+        if event.type == pygame.QUIT: 
+            print("Score:", score)
+            sys.exit()
 
     if len(blocks) == 0:
-            sys.exit()
+        print("Score:", score)
+        sys.exit()
 
     ballrect = ballrect.move(ball_speed)
 
     #Ensure ball remains in the screen
     if ballrect.left < 0 or ballrect.right > width:
         ball_speed[0] = -ball_speed[0]
-    if ballrect.top < 0 or ballrect.bottom > height:
+    if ballrect.top < 0:
         ball_speed[1] = -ball_speed[1]
+    if ballrect.bottom > height:
+        print("Score", score)
+        sys.exit()
 
     #Collision between ball and top of tile
     if (ballrect.bottom >= tilerect.top and ballrect.bottom <= tilerect.top + epsilon)  and ((ballrect.right >= tilerect.left and ballrect.left <= tilerect.left) or (ballrect.left >= tilerect.left and ballrect.right <= tilerect.right) or (ballrect.left <= tilerect.right and ballrect.right >= tilerect.right)):
@@ -79,6 +86,7 @@ while 1:
         if (ballrect.top <= blkrect.bottom and ballrect.top >= blkrect.bottom - epsilon) and ((ballrect.right >= blkrect.left and ballrect.left <= blkrect.left) or (ballrect.left >= blkrect.left and ballrect.right <= blkrect.right) or (ballrect.left <= blkrect.right and ballrect.right >= blkrect.right)):
             blocks[i] = None
             ball_speed[1] = -ball_speed[1]
+            score += 1
             print("Ball bit top of a block")
 
         #Collision between ball and left side of block
@@ -86,6 +94,7 @@ while 1:
             if (ballrect.right >= blkrect.left and ballrect.left < blkrect.left) and (ballrect.top <= blkrect.bottom and ballrect.bottom >= blkrect.top):
                 blocks[i] = None
                 ball_speed[0] = -ball_speed[0]
+                score += 1
                 print("Ball hit left side of a block")
         
         #Collision between ball and right side of block
@@ -93,6 +102,7 @@ while 1:
             if (ballrect.left <= blkrect.right and ballrect.right > blkrect.right) and (ballrect.top <= blkrect.bottom and ballrect.bottom >= blkrect.top):
                 blocks[i] = None
                 ball_speed[0]= -ball_speed[0]
+                score += 1
                 print("Ball hit right side of a block")
 
     blocks = list(filter(lambda el : el is not None, blocks))
@@ -100,9 +110,11 @@ while 1:
     #Player input
     key_states = pygame.key.get_pressed()
     if key_states[pygame.K_a]:
-        tilerect = tilerect.move([-tile_speed, 0])
+        if tilerect.left != 0:
+            tilerect = tilerect.move([-tile_speed, 0])
     if key_states[pygame.K_d]:
-        tilerect = tilerect.move([tile_speed, 0])
+        if tilerect.right != width:
+            tilerect = tilerect.move([tile_speed, 0])
 
 
     Clock.tick(40)
