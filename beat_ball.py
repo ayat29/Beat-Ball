@@ -5,11 +5,11 @@ pygame.init()
 Clock = pygame.time.Clock()
 
 #Features of game entities
-size = width, height = 500, 500
-ball_size = (30, 20)
-tile_size = (90, 20)
+size = width, height = 500, 500 #Impose a standard of a 50 x 50 grid where each cell is 10 x 10
+ball_size = (20, 20)
+tile_size = (100, 20)
 block_size = (100, 20)
-ball_speed = [8, 5]
+ball_speed = [10, 5]
 tile_speed = 10
 black = 0, 0, 0
 block_color = 255, 255, 255
@@ -20,12 +20,13 @@ screen = pygame.display.set_mode(size)
 #Creating the ball
 ball = pygame.image.load("ball.png")
 ball = pygame.transform.scale(ball, ball_size)
+#ballrect = ball.get_rect(center = (tile_size[0] / 2, height))
 ballrect = ball.get_rect(center = (width / 2, height / 2))
 
 #Creating the player-controlled tile
 tile = pygame.image.load("tile.png")
 tile = pygame.transform.scale(tile, tile_size)
-tilerect = tile.get_rect(center = (tile_size[0] / 2, height))
+tilerect = tile.get_rect(center = (tile_size[0] / 2, height - tile_size[1] / 2))
 
 #Creating blocks that the player will destroy to generate points
 
@@ -116,6 +117,11 @@ while 1:
         
 
     pygame.display.flip()
+
+
+
+#Issues
+# Need to take tile movement into account when determining aftermath of collision
 
     
 
