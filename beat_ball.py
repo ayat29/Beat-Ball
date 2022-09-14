@@ -6,13 +6,14 @@ Clock = pygame.time.Clock()
 
 #Features of game entities
 size = width, height = 500, 500
-ball_size = (30, 25)
+ball_size = (30, 20)
 tile_size = (90, 20)
 block_size = (100, 25)
 ball_speed = [8, 5]
 tile_speed = 10
 black = 0, 0, 0
 block_color = 255, 255, 255
+epsilon = 0.1
 
 screen = pygame.display.set_mode(size)
 
