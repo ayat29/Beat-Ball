@@ -8,7 +8,7 @@ Clock = pygame.time.Clock()
 size = width, height = 500, 500
 ball_size = (30, 20)
 tile_size = (90, 20)
-block_size = (100, 25)
+block_size = (100, 20)
 ball_speed = [8, 5]
 tile_speed = 10
 black = 0, 0, 0
@@ -20,7 +20,7 @@ screen = pygame.display.set_mode(size)
 #Creating the ball
 ball = pygame.image.load("ball.png")
 ball = pygame.transform.scale(ball, ball_size)
-ballrect = ball.get_rect()
+ballrect = ball.get_rect(center = (width / 2, height / 2))
 
 #Creating the player-controlled tile
 tile = pygame.image.load("tile.png")
@@ -53,19 +53,20 @@ while 1:
         ball_speed[1] = -ball_speed[1]
 
     #Collision between ball and top of tile
-    if ballrect.bottom > tilerect.top and ((ballrect.right >= tilerect.left and ballrect.left <= tilerect.left) or (ballrect.left >= tilerect.left and ballrect.right <= tilerect.right) or (ballrect.left <= tilerect.right and ballrect.right >= tilerect.right)):
+    if (ballrect.bottom >= tilerect.top and ballrect.bottom <= tilerect.top + epsilon)  and ((ballrect.right >= tilerect.left and ballrect.left <= tilerect.left) or (ballrect.left >= tilerect.left and ballrect.right <= tilerect.right) or (ballrect.left <= tilerect.right and ballrect.right >= tilerect.right)):
         ball_speed[1] = -ball_speed[1]
+        print("Ball hit top of tile")
 
     #Collision between ball and left side of tile
-    if (ball_speed[0] > 0):
+    elif (ball_speed[0] > 0):
         if (ballrect.right >= tilerect.left and ballrect.left < tilerect.left) and (ballrect.bottom >= tilerect.top and ballrect.bottom < height):
-            print("hit3")
+            print("Ball hit left side of tile")
             ball_speed[0], ball_speed[1] = -ball_speed[0], -ball_speed[1]
     
     #Collision between ball and right side of tile
-    if (ball_speed[0] < 0):
+    elif (ball_speed[0] < 0):
         if (ballrect.left <= tilerect.right and ballrect.right > tilerect.right) and (ballrect.bottom >= tilerect.top and ballrect.bottom < height):
-            print("hit2")
+            print("Ball hit right side of tile")
             ball_speed[0], ball_speed[1] = -ball_speed[0], -ball_speed[1]
 
     #Block and ball collision
@@ -74,23 +75,24 @@ while 1:
         #Collision between top of block and ball
         
         blkrect = blocks[i][1]
-        if (ballrect.top <= blkrect.bottom and ballrect.bottom >= blkrect.top) and ((ballrect.right >= blkrect.left and ballrect.left <= blkrect.left) or (ballrect.left >= blkrect.left and ballrect.right <= blkrect.right) or (ballrect.left <= blkrect.right and ballrect.right >= blkrect.right)):
+        if (ballrect.top <= blkrect.bottom and ballrect.top >= blkrect.bottom - epsilon) and ((ballrect.right >= blkrect.left and ballrect.left <= blkrect.left) or (ballrect.left >= blkrect.left and ballrect.right <= blkrect.right) or (ballrect.left <= blkrect.right and ballrect.right >= blkrect.right)):
             blocks[i] = None
             ball_speed[1] = -ball_speed[1]
-            print("hit4")
+            print("Ball bit top of a block")
 
         #Collision between ball and left side of block
-        if (ball_speed[0] > 0):
+        elif (ball_speed[0] > 0):
             if (ballrect.right >= blkrect.left and ballrect.left < blkrect.left) and (ballrect.top <= blkrect.bottom and ballrect.bottom >= blkrect.top):
                 blocks[i] = None
                 ball_speed[0] = -ball_speed[0]
-                print("Hit1")
+                print("Ball hit left side of a block")
         
         #Collision between ball and right side of block
-        if (ball_speed[0] < 0):
+        elif (ball_speed[0] < 0):
             if (ballrect.left <= blkrect.right and ballrect.right > blkrect.right) and (ballrect.top <= blkrect.bottom and ballrect.bottom >= blkrect.top):
                 blocks[i] = None
                 ball_speed[0]= -ball_speed[0]
+                print("Ball hit right side of a block")
 
     blocks = list(filter(lambda el : el is not None, blocks))
 
@@ -102,7 +104,7 @@ while 1:
         tilerect = tilerect.move([tile_speed, 0])
 
 
-    Clock.tick(10)
+    Clock.tick(40)
     screen.fill(black)
     screen.blit(ball, ballrect)
     screen.blit(tile, tilerect)
